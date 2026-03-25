@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitt with Pitt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dependable.css') }}">
 </head>
 <body>
     <header>
         <a href="{{ url_for('home') }}">
-            <!-- <img srs="{{ url_for('static', filename='images/icon.jpeg') }}" alt="Logo" width="100%"> -->
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" width="10%">
             <h1>Fitt with Pitt</h1>
         </a>
     </header>
+    <hr>
     {% block content %}{% endblock %}
 </body>
 </html>

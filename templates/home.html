@@ -6,4 +6,10 @@
     <p>Welcome to the dashboard!</p>
     <a href="" class="button_logout"></a>
 </div>
+<nav>
+    <ul>
+        <li><a href="{{ url_for('nutrition') }}">Nutrition Log</a></li>
+        <li><a href="{{ url_for('activity') }}">Activity Log</a></li>
+    </ul>
+</nav>
 {% endblock %}

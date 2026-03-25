@@ -1,0 +1,2 @@
+@import url(large_screen.css) (min-width: 500px);
+@import url(small_screen.css) (max-width: 499px);

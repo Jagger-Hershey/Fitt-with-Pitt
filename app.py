@@ -9,6 +9,7 @@ from models.activity_model import Activity
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///main.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'dev-secret-key'
 
 # Initialize database and login manager
 db.init_app(app)
@@ -20,6 +21,10 @@ login_manager.login_message_category = 'info'
 
 with app.app_context():
     db.create_all()
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @app.route('/')
 def index():
@@ -33,6 +38,14 @@ def home():
 def dashboard():
     return render_template('dashboard.html')
 
+@app.route('/nutrition')
+def nutrition():
+    return render_template('nutrition.html')
+
+@app.route('/activity')
+def activity():
+    return render_template('activity.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -42,8 +55,9 @@ def login():
         # Check user against database hashed info
         # If authorized, login and redirect to home
         # Otherwise throw login error
+        return render_template('login.html', error='Invalid credentials')
     else:
-        return render_template('login.html')    
+        return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -54,6 +68,7 @@ def register():
         # Check if username is unique throw error if not
         # Otherwise create user and add to database
         # Redirect to login
+        return redirect(url_for('login'))
 
     else:
         return render_template('register.html')
@@ -61,6 +76,7 @@ def register():
 @app.route('/logout')
 @login_required
 def logout():
+    logout_user()
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
