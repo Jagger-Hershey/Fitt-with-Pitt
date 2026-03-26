@@ -1,4 +1,10 @@
 from models import db
 
 class Activity(db.Model):
-    entry_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    workout_name = db.Column(db.String(80), nullable = False)
+    user_notes = db.Column(db.String(1000))
+    num_set = db.Column(db.Integer)
+    num_reps = db.Column(db.Integer)
+    calories_burned = db.Column(db.Integer)
+    muscle_group = db.Column(db.String(50), nullable = False)

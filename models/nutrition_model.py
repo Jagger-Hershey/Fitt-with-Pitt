@@ -3,7 +3,7 @@
 from models import db
 
 class Nutrition(db.Model):
-    entry_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     food_name = db.Column(db.String(80), unique=True)
     user_notes = db.Column(db.String(1000))  # Stores any details the user wants to store about the food
     serving_size = db.Column(db.Integer)
