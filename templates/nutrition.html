@@ -1,10 +1,166 @@
 {% extends "base.html" %}
+{% block title %}Nutrition — Fitt with Pitt{% endblock %}
 
 {% block content %}
-<h1>Nutrition Page</h1>
-<p>Current Nutrition</p>
-<a href="{{ url_for('home') }}">Home</a>
-<footer>
-    <a href="{{ url_for('logout') }}">Logout</a>
-</footer>
+
+<div class="page-header">
+    <h1>Nutrition</h1>
+    <p>Log your meals and track your macros</p>
+</div>
+
+<div class="two-col" style="align-items: start;">
+
+    <!-- Log a meal form -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Log a Meal</span>
+        </div>
+
+        <!-- TODO: wire up POST route in app.py -->
+        <form method="POST" action="{{ url_for('nutrition') }}">
+            <div class="form-group">
+                <label for="food_name">Food Name</label>
+                <input type="text" id="food_name" name="food_name"
+                       placeholder="e.g. Grilled chicken breast" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="serving_size">Serving Size (g)</label>
+                    <input type="number" id="serving_size" name="serving_size"
+                           placeholder="100" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="num_calories">Calories (kcal)</label>
+                    <input type="number" id="num_calories" name="num_calories"
+                           placeholder="0" min="0">
+                </div>
+            </div>
+
+            <div class="form-row-3">
+                <div class="form-group">
+                    <label for="grams_of_protein">Protein (g)</label>
+                    <input type="number" id="grams_of_protein" name="grams_of_protein"
+                           placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="grams_of_carb">Carbs (g)</label>
+                    <input type="number" id="grams_of_carb" name="grams_of_carb"
+                           placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="grams_of_fat">Fat (g)</label>
+                    <input type="number" id="grams_of_fat" name="grams_of_fat"
+                           placeholder="0" min="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="user_notes">Notes</label>
+                <textarea id="user_notes" name="user_notes"
+                          placeholder="Optional notes about this meal..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add Meal
+            </button>
+        </form>
+    </div>
+
+    <!-- Daily summary -->
+    <div>
+        <div class="card" style="margin-bottom: 16px;">
+            <div class="card-header">
+                <span class="card-title">Today's Summary</span>
+            </div>
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+                <div class="stat-card highlight" style="padding: 14px;">
+                    <div class="stat-label">Calories</div>
+                    <div class="stat-value" style="font-size: 22px;">—</div>
+                    <div class="stat-unit">kcal</div>
+                </div>
+                <div class="stat-card" style="padding: 14px;">
+                    <div class="stat-label">Protein</div>
+                    <div class="stat-value" style="font-size: 22px;">—</div>
+                    <div class="stat-unit">g</div>
+                </div>
+                <div class="stat-card" style="padding: 14px;">
+                    <div class="stat-label">Carbs</div>
+                    <div class="stat-value" style="font-size: 22px;">—</div>
+                    <div class="stat-unit">g</div>
+                </div>
+                <div class="stat-card" style="padding: 14px;">
+                    <div class="stat-label">Fat</div>
+                    <div class="stat-value" style="font-size: 22px;">—</div>
+                    <div class="stat-unit">g</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graph placeholder -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Calorie Trend</span>
+            </div>
+            <div class="graph-placeholder">Graph coming soon</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Meal log table -->
+<div class="card" style="margin-top: 20px;">
+    <div class="card-header">
+        <span class="card-title">Meal Log</span>
+    </div>
+
+    <!-- Replace the empty state below with the actual table once backend returns entries -->
+    <div class="empty-state">
+        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+            <line x1="6" y1="1" x2="6" y2="4"/>
+            <line x1="10" y1="1" x2="10" y2="4"/>
+            <line x1="14" y1="1" x2="14" y2="4"/>
+        </svg>
+        <p>No meals logged yet — add your first meal above</p>
+    </div>
+
+    <!--
+    Once entries are passed from the route, replace the empty state with:
+
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Food</th>
+                    <th>Serving</th>
+                    <th>Calories</th>
+                    <th>Protein</th>
+                    <th>Carbs</th>
+                    <th>Fat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.food_name }}</td>
+                    <td>{{ entry.serving_size }}g</td>
+                    <td>{{ entry.num_calories }} kcal</td>
+                    <td>{{ entry.grams_of_protein }}g</td>
+                    <td>{{ entry.grams_of_carb }}g</td>
+                    <td>{{ entry.grams_of_fat }}g</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    -->
+</div>
+
 {% endblock %}

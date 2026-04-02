@@ -1,25 +1,50 @@
 {% extends "base.html" %}
+{% block title %}Create Account — Fitt with Pitt{% endblock %}
 
 {% block content %}
-<nav>
-    <ul>
-        <li><a href="{{ url_for('login') }}">Login</a></li>
-        <li><a href="{{ url_for('register') }}">Create Account</a></li>
-    </ul>
-</nav>
-<h1>Create an Account</h1>
+<div class="auth-page">
 
-{% if error %}
-    <p class="error">{{ error }}</p>
-{% endif %}
+    <a class="auth-logo" href="{{ url_for('login') }}">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Fitt with Pitt logo">
+        <span class="auth-logo-text">Fitt with Pitt</span>
+    </a>
 
-<form method="POST" action="{{ url_for('register') }}">
-    <label for="username">Username:</label>
-    <input type="text" name="username" required>
-    <label for="email">Email:</label>
-    <input type="email" name="email" required>
-    <label for="password">Password:</label>
-    <input type="password" name="password" required>
-    <button type="submit">Sign Up</button>
-</form>
+    <div class="auth-card">
+        <h1>Create your account</h1>
+        <p class="auth-subtitle">Start tracking your fitness journey</p>
+
+        {% if error %}
+            <div class="error-msg">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username"
+                       placeholder="Choose a username"
+                       required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email"
+                       placeholder="you@example.com"
+                       required autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"
+                       placeholder="Create a password"
+                       required autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top: 8px;">
+                Create account
+            </button>
+        </form>
+    </div>
+
+    <div class="auth-footer">
+        Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+    </div>
+
+</div>
 {% endblock %}

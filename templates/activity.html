@@ -1,11 +1,167 @@
 {% extends "base.html" %}
+{% block title %}Activity — Fitt with Pitt{% endblock %}
 
 {% block content %}
-    <h1>Activity Page</h1>
-    <p>Current Activity</p>
-    <a href="{{ url_for('home') }}">Home</a>
 
-    <footer>
-        <a href="{{ url_for('logout') }}">Logout</a>
-    </footer>
+<div class="page-header">
+    <h1>Activity</h1>
+    <p>Log your workouts and track your progress</p>
+</div>
+
+<div class="two-col" style="align-items: start;">
+
+    <!-- Log a workout form -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Log a Workout</span>
+        </div>
+
+        <!-- TODO: wire up POST route in app.py -->
+        <form method="POST" action="{{ url_for('activity') }}">
+            <div class="form-group">
+                <label for="workout_name">Exercise Name</label>
+                <input type="text" id="workout_name" name="workout_name"
+                       placeholder="e.g. Bench Press" required>
+            </div>
+
+            <div class="form-group">
+                <label for="muscle_group">Muscle Group</label>
+                <select id="muscle_group" name="muscle_group" required>
+                    <option value="" disabled selected>Select muscle group</option>
+                    <option value="chest">Chest</option>
+                    <option value="back">Back</option>
+                    <option value="shoulders">Shoulders</option>
+                    <option value="biceps">Biceps</option>
+                    <option value="triceps">Triceps</option>
+                    <option value="legs">Legs</option>
+                    <option value="glutes">Glutes</option>
+                    <option value="core">Core</option>
+                    <option value="cardio">Cardio</option>
+                    <option value="full_body">Full Body</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-row-3">
+                <div class="form-group">
+                    <label for="num_set">Sets</label>
+                    <input type="number" id="num_set" name="num_set"
+                           placeholder="3" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="num_reps">Reps</label>
+                    <input type="number" id="num_reps" name="num_reps"
+                           placeholder="10" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="calories_burned">Calories Burned</label>
+                    <input type="number" id="calories_burned" name="calories_burned"
+                           placeholder="0" min="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="user_notes">Notes</label>
+                <textarea id="user_notes" name="user_notes"
+                          placeholder="Optional notes, e.g. weight used, how it felt..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add Workout
+            </button>
+        </form>
+    </div>
+
+    <!-- Weekly summary -->
+    <div>
+        <div class="card" style="margin-bottom: 16px;">
+            <div class="card-header">
+                <span class="card-title">This Week</span>
+            </div>
+            <div class="stats-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
+                <div class="stat-card highlight" style="padding: 14px;">
+                    <div class="stat-label">Workouts</div>
+                    <div class="stat-value" style="font-size: 22px;">—</div>
+                    <div class="stat-unit">sessions</div>
+                </div>
+                <div class="stat-card" style="padding: 14px;">
+                    <div class="stat-label">Calories Burned</div>
+                    <div class="stat-value" style="font-size: 22px;">—</div>
+                    <div class="stat-unit">kcal</div>
+                </div>
+                <div class="stat-card" style="padding: 14px;">
+                    <div class="stat-label">Total Sets</div>
+                    <div class="stat-value" style="font-size: 22px;">—</div>
+                    <div class="stat-unit">sets</div>
+                </div>
+                <div class="stat-card" style="padding: 14px;">
+                    <div class="stat-label">Total Reps</div>
+                    <div class="stat-value" style="font-size: 22px;">—</div>
+                    <div class="stat-unit">reps</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graph placeholder -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Workout Frequency</span>
+            </div>
+            <div class="graph-placeholder">Graph coming soon</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Activity log table -->
+<div class="card" style="margin-top: 20px;">
+    <div class="card-header">
+        <span class="card-title">Workout Log</span>
+    </div>
+
+    <!-- Replace the empty state below with the actual table once backend returns entries -->
+    <div class="empty-state">
+        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <p>No workouts logged yet — add your first workout above</p>
+    </div>
+
+    <!--
+    Once entries are passed from the route, replace the empty state with:
+
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Exercise</th>
+                    <th>Muscle Group</th>
+                    <th>Sets</th>
+                    <th>Reps</th>
+                    <th>Calories Burned</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.workout_name }}</td>
+                    <td><span class="badge badge-green">{{ entry.muscle_group }}</span></td>
+                    <td>{{ entry.num_set }}</td>
+                    <td>{{ entry.num_reps }}</td>
+                    <td>{{ entry.calories_burned }} kcal</td>
+                    <td class="text-secondary">{{ entry.user_notes or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    -->
+</div>
+
 {% endblock %}

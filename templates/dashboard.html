@@ -1,13 +1,111 @@
 {% extends "base.html" %}
+{% block title %}Dashboard — Fitt with Pitt{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Welcome, username!</h1>
-    <p>Welcome to the dashboard!</p>
-    <a href="" class="button_logout"></a>
+
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Welcome back, {{ current_user.username }}</p>
 </div>
 
-<footer>
-    <a href="{{ url_for('logout') }}">Logout</a>
-</footer>
+<!-- Summary stats -->
+<div class="stats-grid">
+    <div class="stat-card highlight">
+        <div class="stat-label">Calories Today</div>
+        <div class="stat-value">—</div>
+        <div class="stat-unit">kcal consumed</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Protein Today</div>
+        <div class="stat-value">—</div>
+        <div class="stat-unit">grams</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Workouts This Week</div>
+        <div class="stat-value">—</div>
+        <div class="stat-unit">sessions logged</div>
+    </div>
+</div>
+
+<!-- Quick actions -->
+<div class="quick-actions">
+    <a href="{{ url_for('nutrition') }}" class="action-card">
+        <div class="action-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                <line x1="6" y1="1" x2="6" y2="4"/>
+                <line x1="10" y1="1" x2="10" y2="4"/>
+                <line x1="14" y1="1" x2="14" y2="4"/>
+            </svg>
+        </div>
+        <span class="action-card-label">Log Meal</span>
+    </a>
+    <a href="{{ url_for('activity') }}" class="action-card">
+        <div class="action-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+        </div>
+        <span class="action-card-label">Log Workout</span>
+    </a>
+    <a href="#" class="action-card">
+        <div class="action-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+            </svg>
+        </div>
+        <span class="action-card-label">Set Goals</span>
+    </a>
+</div>
+
+<!-- Recent logs -->
+<div class="two-col">
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Recent Meals</span>
+            <a href="{{ url_for('nutrition') }}" class="btn btn-ghost btn-sm">View all</a>
+        </div>
+        <div class="empty-state">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                <line x1="6" y1="1" x2="6" y2="4"/>
+                <line x1="10" y1="1" x2="10" y2="4"/>
+                <line x1="14" y1="1" x2="14" y2="4"/>
+            </svg>
+            <p>No meals logged today</p>
+            <a href="{{ url_for('nutrition') }}" class="btn btn-secondary btn-sm">Log a meal</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Recent Activity</span>
+            <a href="{{ url_for('activity') }}" class="btn btn-ghost btn-sm">View all</a>
+        </div>
+        <div class="empty-state">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            <p>No workouts logged today</p>
+            <a href="{{ url_for('activity') }}" class="btn btn-secondary btn-sm">Log a workout</a>
+        </div>
+    </div>
+</div>
+
+<!-- Progress graphs — team to implement -->
+<div class="card" style="margin-top: 20px;">
+    <div class="card-header">
+        <span class="card-title">Progress Over Time</span>
+    </div>
+    <div class="graph-placeholder">Graph coming soon</div>
+</div>
+
 {% endblock %}
