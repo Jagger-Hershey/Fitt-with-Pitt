@@ -70,10 +70,32 @@ def nutrition():
         entries = Nutrition.query.all()
         return render_template('nutrition.html', entries=entries)
 
-@app.route('/activity')
+@app.route('/activity', methods=['GET', 'POST'])
 @login_required
 def activity():
-    return render_template('activity.html')
+    if request.method == 'POST':
+        workout_name = request.form.get('workout_name')
+        muscle_group = request.form.get('muscle_group')
+        num_set = request.form.get('num_set')
+        num_reps = request.form.get('num_reps')
+        calories_burned = request.form.get('calories_burned')
+        user_notes = request.form.get('user_notes')
+
+        new_activity = Activity(
+            workout_name=workout_name,
+            muscle_group=muscle_group,
+            num_set=num_set,
+            num_reps=num_reps,
+            calories_burned=calories_burned,
+            user_notes=user_notes
+        )
+        db.session.add(new_activity)
+        db.session.commit()
+
+        return redirect(url_for('activity'))
+    else:
+        entries = Activity.query.all()
+        return render_template('activity.html', entries=entries)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

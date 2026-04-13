@@ -123,6 +123,7 @@
         <span class="card-title">Workout Log</span>
     </div>
 
+    {% if not entries %}
     <!-- Replace the empty state below with the actual table once backend returns entries -->
     <div class="empty-state">
         <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -131,10 +132,9 @@
         </svg>
         <p>No workouts logged yet — add your first workout above</p>
     </div>
-
-    <!--
-    Once entries are passed from the route, replace the empty state with:
-
+    {% endif %}
+    
+    <!-- Once entries are passed from the route, replace the empty state with: -->
     <div class="table-wrap">
         <table class="data-table">
             <thead>
@@ -161,7 +161,7 @@
             </tbody>
         </table>
     </div>
-    -->
+   
 </div>
 
 {% endblock %}
