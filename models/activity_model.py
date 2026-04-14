@@ -7,6 +7,7 @@ class Activity(db.Model):
     user_notes = db.Column(db.String(1000))
     num_set = db.Column(db.Integer)
     num_reps = db.Column(db.Integer)
+    workout_weight = db.Column(db.Integer)
     calories_burned = db.Column(db.Integer)
     muscle_group = db.Column(db.String(50), nullable=False)
     
