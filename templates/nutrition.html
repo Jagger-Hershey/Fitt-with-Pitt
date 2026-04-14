@@ -11,7 +11,7 @@
 <div class="two-col" style="align-items: start;">
 
     <!-- Log a meal form -->
-    <div class="card">
+    <div class="card nutrition-card">
         <div class="card-header">
             <span class="card-title">Log a Meal</span>
         </div>
@@ -73,7 +73,7 @@
 
     <!-- Daily summary -->
     <div>
-        <div class="card" style="margin-bottom: 16px;">
+        <div class="card nutrition-card" style="margin-bottom: 16px;">
             <div class="card-header">
                 <span class="card-title">Today's Summary</span>
             </div>
@@ -131,8 +131,7 @@
         </svg>
         <p>No meals logged yet — add your first meal above</p>
     </div>
-    {% endif %}
-    
+    {% else %}
     <!-- Once entries are passed from the route, replace the empty state with: -->
     <div class="table-wrap">
         <table class="data-table">
@@ -160,7 +159,7 @@
             </tbody>
         </table>
     </div>
-   
+    {% endif %}
 </div>
 
 {% endblock %}
