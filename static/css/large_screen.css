@@ -849,3 +849,7 @@ button { font-family: inherit; }
     font-size: 16px;
     font-weight: 600;
 }
+
+.nutrition-card {
+    height: 100%;
+}
