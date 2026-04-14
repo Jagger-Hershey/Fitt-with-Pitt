@@ -40,8 +40,8 @@ def home():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    nutrition_entries = Nutrition.query.all()
-    activity_entries = Activity.query.all()
+    nutrition_entries = Nutrition.query.all()[:5]
+    activity_entries = Activity.query.all()[:5]
     return render_template('dashboard.html', nutrition_entries=nutrition_entries, activity_entries=activity_entries)
 
 @app.route('/nutrition', methods=['GET', 'POST'])
