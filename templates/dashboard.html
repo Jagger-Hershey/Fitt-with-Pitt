@@ -10,17 +10,17 @@
 
 <!-- Summary stats -->
 <div class="stats-grid">
-    <div class="stat-card highlight">
+    <div class="stat-card highlight card-refactor">
         <div class="stat-label">Calories Today</div>
         <div class="stat-value">—</div>
         <div class="stat-unit">kcal consumed</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card card-refactor">
         <div class="stat-label">Protein Today</div>
         <div class="stat-value">—</div>
         <div class="stat-unit">grams</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card card-refactor">
         <div class="stat-label">Workouts This Week</div>
         <div class="stat-value">—</div>
         <div class="stat-unit">sessions logged</div>
@@ -29,7 +29,7 @@
 
 <!-- Quick actions -->
 <div class="quick-actions">
-    <a href="{{ url_for('nutrition') }}" class="action-card">
+    <a href="{{ url_for('nutrition') }}" class="action-card card-refactor">
         <div class="action-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
@@ -42,7 +42,7 @@
         </div>
         <span class="action-card-label">Log Meal</span>
     </a>
-    <a href="{{ url_for('activity') }}" class="action-card">
+    <a href="{{ url_for('activity') }}" class="action-card card-refactor">
         <div class="action-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
@@ -51,7 +51,7 @@
         </div>
         <span class="action-card-label">Log Workout</span>
     </a>
-    <a href="#" class="action-card">
+    <a href="#" class="action-card card-refactor">
         <div class="action-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
@@ -65,7 +65,7 @@
 
 <!-- Recent logs -->
 <div class="two-col">
-    <div class="card">
+    <div class="card card-refactor">
         <div class="card-header">
             <span class="card-title">Recent Meals</span>
             <a href="{{ url_for('nutrition') }}" class="btn btn-ghost btn-sm">View all</a>
@@ -83,7 +83,7 @@
             <p>No meals logged today</p>
             <a href="{{ url_for('nutrition') }}" class="btn btn-secondary btn-sm">Log a meal</a>
             {% else %}
-            <div class="table-wrap">
+            <div class="table-wrap dashboard-table">
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -113,7 +113,7 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card card-refactor">
         <div class="card-header">
             <span class="card-title">Recent Activity</span>
             <a href="{{ url_for('activity') }}" class="btn btn-ghost btn-sm">View all</a>
@@ -127,7 +127,7 @@
             <p>No workouts logged today</p>
             <a href="{{ url_for('activity') }}" class="btn btn-secondary btn-sm">Log a workout</a>
             {% else %}
-            <div class="table-wrap">
+            <div class="table-wrap dashboard-table">
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -136,7 +136,6 @@
                             <th>Sets</th>
                             <th>Reps</th>
                             <th>Calories</th>
-                            <th>Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -147,7 +146,6 @@
                             <td>{{ entry.num_set or '—' }}</td>
                             <td>{{ entry.num_reps or '—' }}</td>
                             <td>{{ entry.calories_burned or 0 }}</td>
-                            <td class="text-secondary">{{ entry.created_at.strftime('%b %d') if entry.created_at else '—' }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

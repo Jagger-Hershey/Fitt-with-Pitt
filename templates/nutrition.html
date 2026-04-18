@@ -11,7 +11,7 @@
 <div class="two-col" style="align-items: start;">
 
     <!-- Log a meal form -->
-    <div class="card nutrition-card">
+    <div class="card card-refactor">
         <div class="card-header">
             <span class="card-title">Log a Meal</span>
         </div>
@@ -72,8 +72,8 @@
     </div>
 
     <!-- Daily summary -->
-    <div>
-        <div class="card nutrition-card" style="margin-bottom: 16px;">
+    <div class="card-refactor">
+        <div class="card" style="margin-bottom: 16px;">
             <div class="card-header">
                 <span class="card-title">Today's Summary</span>
             </div>
@@ -143,6 +143,7 @@
                     <th>Protein</th>
                     <th>Carbs</th>
                     <th>Fat</th>
+                    <th>Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -154,6 +155,7 @@
                     <td>{{ entry.grams_of_protein }}g</td>
                     <td>{{ entry.grams_of_carb }}g</td>
                     <td>{{ entry.grams_of_fat }}g</td>
+                    <td class="text-secondary">{{ entry.created_at.strftime('%b %d') if entry.created_at else '—' }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

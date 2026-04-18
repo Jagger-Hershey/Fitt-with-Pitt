@@ -40,7 +40,7 @@ def home():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    nutrition_entries = Nutrition.query.all()[:4]  # Need to order by creation time here too
+    nutrition_entries = Nutrition.query.filter_by(user_id=current_user.id).order_by(Nutrition.created_at.desc()).all()[:4]
     activity_entries = Activity.query.filter_by(user_id=current_user.id).order_by(Activity.created_at.desc()).all()[:4]
     return render_template('dashboard.html', nutrition_entries=nutrition_entries, activity_entries=activity_entries)
 
@@ -71,7 +71,7 @@ def nutrition():
 
         return redirect(url_for('nutrition'))
     else:
-        entries = Nutrition.query.filter_by(user_id=current_user.id).all()
+        entries = Nutrition.query.filter_by(user_id=current_user.id).order_by(Nutrition.created_at.desc()).all()
         return render_template('nutrition.html', entries=entries)
 
 @app.route('/activity', methods=['GET', 'POST'])

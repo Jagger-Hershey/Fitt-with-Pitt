@@ -774,3 +774,8 @@ button { font-family: inherit; }
     font-size: 16px;
     font-weight: 600;
 }
+
+.card-refactor {
+    width: 100%;
+    grid-column: span 2;
+}
