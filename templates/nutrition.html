@@ -144,6 +144,7 @@
                     <th>Carbs</th>
                     <th>Fat</th>
                     <th>Date</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -156,7 +157,11 @@
                     <td>{% if entry.grams_of_carb is not none and entry.grams_of_carb != '' %}{{ entry.grams_of_carb }}g{% else %}—{% endif %}</td>
                     <td>{% if entry.grams_of_fat is not none and entry.grams_of_fat != '' %}{{ entry.grams_of_fat }}g{% else %}—{% endif %}</td>
                     <td class="text-secondary">{{ entry.created_at.strftime('%b %d') if entry.created_at else '—' }}</td>
-
+                    <td>
+                        <form method="POST" action="{{ url_for('delete_nutrition', entry_id=entry.id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

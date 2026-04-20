@@ -103,6 +103,18 @@ def nutrition():
     else:
         entries = Nutrition.query.filter_by(user_id=current_user.id).order_by(Nutrition.created_at.desc()).all()
         return render_template('nutrition.html', entries=entries)
+    
+@app.route('/delete_nutrition/<int:entry_id>', methods=['POST'])
+@login_required
+def delete_nutrition(entry_id):
+    entry = Nutrition.query.get_or_404(entry_id)
+    if entry.user_id != current_user.id:
+        flash('Not authorized.', 'danger')
+        return redirect(url_for('nutrition'))
+    db.session.delete(entry)
+    db.session.commit()
+    flash('Meal deleted.', 'success')
+    return redirect(url_for('nutrition'))
 
 @app.route('/activity', methods=['GET', 'POST'])
 @login_required
