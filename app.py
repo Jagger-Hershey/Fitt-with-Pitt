@@ -214,6 +214,18 @@ def set_workout_goal():
     
     return redirect(url_for('activity'))
 
+@app.route('/delete_activity/<int:entry_id>', methods=['POST'])
+@login_required
+def delete_activity(entry_id):
+    entry = Activity.query.get_or_404(entry_id)
+    if entry.user_id != current_user.id:
+        flash('Not authorized.', 'danger')
+        return redirect(url_for('activity'))
+    db.session.delete(entry)
+    db.session.commit()
+    flash('Workout deleted.', 'success')
+    return redirect(url_for('activity'))
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:

@@ -266,6 +266,7 @@ document.querySelectorAll('.chart-tab').forEach(btn => {
                     <th>Reps</th>
                     <th>Calories</th>
                     <th>Date</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -278,6 +279,11 @@ document.querySelectorAll('.chart-tab').forEach(btn => {
                     <td>{{ entry.num_reps or '—' }}</td>
                     <td>{{ entry.calories_burned or 0 }}</td>
                     <td class="text-secondary">{{ entry.created_at.strftime('%b %d') if entry.created_at else '—' }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('delete_activity', entry_id=entry.id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
