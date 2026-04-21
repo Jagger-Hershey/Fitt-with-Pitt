@@ -102,7 +102,15 @@ def nutrition():
         return redirect(url_for('nutrition'))
     else:
         entries = Nutrition.query.filter_by(user_id=current_user.id).order_by(Nutrition.created_at.desc()).all()
-        return render_template('nutrition.html', entries=entries)
+        today = datetime.utcnow().date()
+        today_entries = [e for e in entries if e.created_at and e.created_at.date() == today]
+        total_calories = sum(float(e.num_calories or 0) for e in today_entries)
+        total_protein = sum(float(e.grams_of_protein or 0) for e in today_entries)
+        total_carbs = sum(float(e.grams_of_carb or 0) for e in today_entries)
+        total_fat = sum(float(e.grams_of_fat or 0) for e in today_entries)
+        return render_template('nutrition.html', entries=entries,
+            total_calories=int(total_calories), total_protein=int(total_protein),
+            total_carbs=int(total_carbs), total_fat=int(total_fat))
     
 @app.route('/delete_nutrition/<int:entry_id>', methods=['POST'])
 @login_required
