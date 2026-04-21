@@ -5,7 +5,11 @@ from models.user_model import User
 from models.nutrition_model import Nutrition
 from models.activity_model import Activity
 from models.goal_model import Goal, ActivityGoal
-from datetime import datetime, timedelta, timezone
+from models.bodyweight_model import BodyWeight
+from datetime import datetime, timedelta
+import requests
+import os
+import json
 
 # Initialize flask application and configure database
 app = Flask(__name__)
@@ -20,6 +24,9 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access this page.'
 login_manager.login_message_category = 'info'
+
+mail_api_key = os.getenv("MAIL_API_KEY")
+auth_api_key = os.getenv("AUTH_API_KEY")
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -40,21 +47,70 @@ def home():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    nutrition_entries = Nutrition.query.filter_by(user_id=current_user.id).order_by(Nutrition.created_at.desc()).all()[:4]
-    activity_entries = Activity.query.filter_by(user_id=current_user.id).order_by(Activity.created_at.desc()).all()[:4]
-    return render_template('dashboard.html', nutrition_entries=nutrition_entries, activity_entries=activity_entries)
+    today = datetime.now().date()
+    current_week_start = today - timedelta(days=today.weekday())
+
+    nutrition_entries = Nutrition.query.filter_by(user_id=current_user.id).order_by(Nutrition.created_at.desc()).limit(4).all()
+    activity_entries = Activity.query.filter_by(user_id=current_user.id).order_by(Activity.created_at.desc()).limit(4).all()
+    weight_entries = BodyWeight.query.filter_by(user_id=current_user.id).order_by(BodyWeight.logged_at.asc()).all()
+
+    today_nutrition_entries = Nutrition.query.filter_by(user_id=current_user.id).all()
+    today_activity_entries = Activity.query.filter_by(user_id=current_user.id).all()
+
+    calories_today = sum(
+        entry.num_calories or 0
+        for entry in today_nutrition_entries
+        if entry.created_at and entry.created_at.date() == today
+    )
+    protein_today = sum(
+        entry.grams_of_protein or 0
+        for entry in today_nutrition_entries
+        if entry.created_at and entry.created_at.date() == today
+    )
+    workouts_this_week = sum(
+        1
+        for entry in today_activity_entries
+        if entry.created_at and entry.created_at.date() >= current_week_start
+    )
+
+    weight_chart_data = [
+        {'date': e.logged_at.strftime('%Y-%m-%d'), 'weight': e.weight, 'unit': e.unit}
+        for e in weight_entries
+    ]
+    latest_weight = weight_entries[-1] if weight_entries else None
+    return render_template('dashboard.html',
+        nutrition_entries=nutrition_entries,
+        activity_entries=activity_entries,
+        calories_today=calories_today,
+        protein_today=protein_today,
+        workouts_this_week=workouts_this_week,
+        weight_chart_data=weight_chart_data,
+        latest_weight=latest_weight,
+    )
+
+@app.route('/log_weight', methods=['POST'])
+@login_required
+def log_weight():
+    weight = request.form.get('weight', type=float)
+    unit = request.form.get('unit', 'lbs')
+    notes = request.form.get('notes') or None
+    if weight:
+        db.session.add(BodyWeight(weight=weight, unit=unit, notes=notes, user_id=current_user.id))
+        db.session.commit()
+        flash('Weight logged!', 'success')
+    return redirect(url_for('dashboard'))
 
 @app.route('/nutrition', methods=['GET', 'POST'])
 @login_required
 def nutrition():
     if request.method == 'POST':
         food_name = request.form.get("food_name")
-        serving_size = request.form.get('serving_size')
-        num_calories = request.form.get('num_calories')
-        grams_of_protein = request.form.get('grams_of_protein')
-        grams_of_carb = request.form.get('grams_of_carb')
-        grams_of_fat = request.form.get('grams_of_fat')
-        user_notes = request.form.get('user_notes')
+        serving_size = request.form.get('serving_size') or None
+        num_calories = request.form.get('num_calories') or None
+        grams_of_protein = request.form.get('grams_of_protein') or None
+        grams_of_carb = request.form.get('grams_of_carb') or None
+        grams_of_fat = request.form.get('grams_of_fat') or None
+        user_notes = request.form.get('user_notes') or None
 
         new_meal = Nutrition(
             food_name=food_name,
@@ -72,7 +128,27 @@ def nutrition():
         return redirect(url_for('nutrition'))
     else:
         entries = Nutrition.query.filter_by(user_id=current_user.id).order_by(Nutrition.created_at.desc()).all()
-        return render_template('nutrition.html', entries=entries)
+        today = datetime.utcnow().date()
+        today_entries = [e for e in entries if e.created_at and e.created_at.date() == today]
+        total_calories = sum(float(e.num_calories or 0) for e in today_entries)
+        total_protein = sum(float(e.grams_of_protein or 0) for e in today_entries)
+        total_carbs = sum(float(e.grams_of_carb or 0) for e in today_entries)
+        total_fat = sum(float(e.grams_of_fat or 0) for e in today_entries)
+        return render_template('nutrition.html', entries=entries,
+            total_calories=int(total_calories), total_protein=int(total_protein),
+            total_carbs=int(total_carbs), total_fat=int(total_fat))
+    
+@app.route('/delete_nutrition/<int:entry_id>', methods=['POST'])
+@login_required
+def delete_nutrition(entry_id):
+    entry = Nutrition.query.get_or_404(entry_id)
+    if entry.user_id != current_user.id:
+        flash('Not authorized.', 'danger')
+        return redirect(url_for('nutrition'))
+    db.session.delete(entry)
+    db.session.commit()
+    flash('Meal deleted.', 'success')
+    return redirect(url_for('nutrition'))
 
 @app.route('/activity', methods=['GET', 'POST'])
 @login_required
@@ -126,8 +202,21 @@ def activity():
         # Calculate ring progress
         ring_progress = min(100, int((weekly_count / weekly_goal) * 100)) if weekly_goal > 0 else 0
         
-        return render_template('activity.html', 
+        chart_data = [
+            {
+                'date': e.created_at.strftime('%Y-%m-%d') if e.created_at else None,
+                'name': e.workout_name,
+                'weight': e.workout_weight,
+                'sets': e.num_set,
+                'reps': e.num_reps,
+                'calories': e.calories_burned,
+            }
+            for e in reversed(entries)
+        ]
+
+        return render_template('activity.html',
             entries=entries,
+            chart_data=chart_data,
             weekly_count=weekly_count,
             weekly_calories=weekly_calories,
             weekly_sets=weekly_sets,
@@ -157,6 +246,18 @@ def set_workout_goal():
         db.session.commit()
         flash(f"Weekly workout goal set to {weekly_workouts}!", "success")
     
+    return redirect(url_for('activity'))
+
+@app.route('/delete_activity/<int:entry_id>', methods=['POST'])
+@login_required
+def delete_activity(entry_id):
+    entry = Activity.query.get_or_404(entry_id)
+    if entry.user_id != current_user.id:
+        flash('Not authorized.', 'danger')
+        return redirect(url_for('activity'))
+    db.session.delete(entry)
+    db.session.commit()
+    flash('Workout deleted.', 'success')
     return redirect(url_for('activity'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -190,6 +291,11 @@ def register():
         email = request.form.get("email")
         password = request.form.get("password")
 
+        # Check if invalid email using mailboxlayer api
+        # if not check_email(email=email):
+        #     flash("Email is invalid. Please choose another.", "info")
+        #     return redirect(url_for('register'))
+
         existing_username = User.query.filter_by(username=username).first()
         existing_email = User.query.filter_by(email=email).first()
         if existing_email:
@@ -207,6 +313,22 @@ def register():
         return redirect(url_for('login'))
     else:
         return render_template('register.html')
+
+# # mail api layer valid email check
+# def check_email(email):
+#     url = f'https://apilayer.net/api/check?access_key={mail_api_key}&{email}=support@apilayer.com'
+#     # Add error checking for api request
+#     call = request.get(url)
+#     data = json.loads(call)
+#     return data['smtp_check'] == 'true' and data['mx_found'] == 'true' and data['catch_all'] == 'true' and data['disposable'] == 'false' and float(data['score']) > 0.6 
+
+# # account auth via brevo api
+# @app.route('/email_verified', methods=['POST'])
+# def email_verified():
+#     url = f'{auth_api_key}'
+#     # Add error checking for api request
+#     call = request.get(url)
+#     data = json.loads(call)
 
 @app.route('/logout')
 @login_required
