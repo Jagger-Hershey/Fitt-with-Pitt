@@ -67,6 +67,16 @@
                         Activity
                     </a>
                 </li>
+                <li>
+                    <a href="{{ url_for('goals') }}"
+                       {% if request.endpoint == 'goals' %}class="active"{% endif %}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-6"/>
+                        </svg>
+                        Goals
+                    </a>
+                </li>
             </ul>
 
             <div class="sidebar-footer">
@@ -149,6 +159,14 @@
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
             </svg>
             <span>Activity</span>
+        </a>
+        <a href="{{ url_for('goals') }}"
+           class="mobile-nav-item {% if request.endpoint == 'goals' %}active{% endif %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-6"/>
+            </svg>
+            <span>Goals</span>
         </a>
         <a href="{{ url_for('logout') }}" class="mobile-nav-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"

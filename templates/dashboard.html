@@ -13,17 +13,26 @@
     <div class="stat-card highlight card-refactor">
         <div class="stat-label">Calories Today</div>
         <div class="stat-value">{{ calories_today }}</div>
-        <div class="stat-unit">kcal consumed</div>
+        <div class="stat-unit">
+            {% if calorie_goal %}{{ calories_today }} / {{ calorie_goal }} kcal{% else %}No goal set{% endif %}
+        </div>
+        <div class="progress-bar"><span style="width: {{ calorie_progress }}%;"></span></div>
     </div>
     <div class="stat-card card-refactor">
         <div class="stat-label">Protein Today</div>
         <div class="stat-value">{{ protein_today }}</div>
-        <div class="stat-unit">grams</div>
+        <div class="stat-unit">
+            {% if protein_goal %}{{ protein_today }} / {{ protein_goal }} grams{% else %}No goal set{% endif %}
+        </div>
+        <div class="progress-bar"><span style="width: {{ protein_progress }}%;"></span></div>
     </div>
     <div class="stat-card card-refactor">
         <div class="stat-label">Workouts This Week</div>
         <div class="stat-value">{{ workouts_this_week }}</div>
-        <div class="stat-unit">sessions logged</div>
+        <div class="stat-unit">
+            {% if workout_goal %}{{ workouts_this_week }} / {{ workout_goal }} sessions{% else %}No goal set{% endif %}
+        </div>
+        <div class="progress-bar"><span style="width: {{ workout_progress }}%;"></span></div>
     </div>
 </div>
 
@@ -51,7 +60,7 @@
         </div>
         <span class="action-card-label">Log Workout</span>
     </a>
-    <a href="#" class="action-card card-refactor">
+    <a href="{{ url_for('goals') }}" class="action-card card-refactor">
         <div class="action-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
@@ -167,6 +176,23 @@
         {% endif %}
     </div>
 
+    {% if weight_goal %}
+    <div class="goal-summary-card">
+        <div>
+            <div class="goal-summary-label">Weight Goal</div>
+            <div class="goal-summary-value">{{ weight_goal.target_weight }} {{ latest_weight.unit if latest_weight else 'lbs' }}</div>
+        </div>
+        <div class="goal-summary-meta">
+            {% if weight_goal_remaining is not none %}
+            <span>{{ weight_goal_remaining }} {{ latest_weight.unit if latest_weight else 'lbs' }} to go</span>
+            {% else %}
+            <span>Log a weight to see progress</span>
+            {% endif %}
+            <div class="progress-bar"><span style="width: {{ weight_goal_progress }}%;"></span></div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Log form -->
     <form method="POST" action="{{ url_for('log_weight') }}" style="display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 20px;">
         <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
@@ -196,21 +222,33 @@
     (function () {
         const data = JSON.parse(document.getElementById('weight-data').textContent);
         const unit = data.length ? data[0].unit : 'lbs';
+        const goalWeight = {{ weight_goal.target_weight if weight_goal and weight_goal.target_weight is not none else 'null' }};
         new Chart(document.getElementById('weightChart'), {
             type: 'line',
             data: {
                 labels: data.map(e => e.date),
-                datasets: [{
-                    label: 'Body Weight',
-                    data: data.map(e => e.weight),
-                    borderColor: '#22C55E',
-                    backgroundColor: 'rgba(34,197,94,0.08)',
-                    pointBackgroundColor: '#22C55E',
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    tension: 0.3,
-                    fill: true,
-                }]
+                datasets: [
+                    {
+                        label: 'Body Weight',
+                        data: data.map(e => e.weight),
+                        borderColor: '#22C55E',
+                        backgroundColor: 'rgba(34,197,94,0.08)',
+                        pointBackgroundColor: '#22C55E',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.3,
+                        fill: true,
+                    },
+                    ...(goalWeight !== null ? [{
+                        label: 'Goal Weight',
+                        data: data.map(() => goalWeight),
+                        borderColor: '#FBBF24',
+                        borderDash: [6, 6],
+                        pointRadius: 0,
+                        tension: 0,
+                        fill: false,
+                    }] : [])
+                ]
             },
             options: {
                 responsive: true,

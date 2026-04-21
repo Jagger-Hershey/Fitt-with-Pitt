@@ -76,37 +76,66 @@
         <div class="card" style="margin-bottom: 16px;">
             <div class="card-header">
                 <span class="card-title">Today's Summary</span>
+                <a href="{{ url_for('goals') }}" class="btn btn-ghost btn-sm">Edit goals</a>
             </div>
             <div class="stats-grid" style="grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0;">
                 <div class="stat-card highlight" style="padding: 14px;">
                     <div class="stat-label">Calories</div>
                     <div class="stat-value" style="font-size: 22px;">{{ total_calories }}</div>
-                    <div class="stat-unit">kcal</div>
+                    <div class="stat-unit">{% if calorie_goal %}Goal {{ calorie_goal }} kcal{% else %}No goal set{% endif %}</div>
+                    <div class="progress-bar"><span style="width: {{ calorie_progress }}%;"></span></div>
                 </div>
                 <div class="stat-card" style="padding: 14px;">
                     <div class="stat-label">Protein</div>
                     <div class="stat-value" style="font-size: 22px;">{{ total_protein }}</div>
-                    <div class="stat-unit">g</div>
+                    <div class="stat-unit">{% if protein_goal %}Goal {{ protein_goal }} g{% else %}No goal set{% endif %}</div>
+                    <div class="progress-bar"><span style="width: {{ protein_progress }}%;"></span></div>
                 </div>
                 <div class="stat-card" style="padding: 14px;">
                     <div class="stat-label">Carbs</div>
                     <div class="stat-value" style="font-size: 22px;">{{ total_carbs }}</div>
-                    <div class="stat-unit">g</div>
+                    <div class="stat-unit">{% if carb_goal %}Goal {{ carb_goal }} g{% else %}No goal set{% endif %}</div>
+                    <div class="progress-bar"><span style="width: {{ carb_progress }}%;"></span></div>
                 </div>
                 <div class="stat-card" style="padding: 14px;">
                     <div class="stat-label">Fat</div>
                     <div class="stat-value" style="font-size: 22px;">{{ total_fat }}</div>
-                    <div class="stat-unit">g</div>
+                    <div class="stat-unit">{% if fat_goal %}Goal {{ fat_goal }} g{% else %}No goal set{% endif %}</div>
+                    <div class="progress-bar"><span style="width: {{ fat_progress }}%;"></span></div>
                 </div>
             </div>
         </div>
 
-        <!-- Graph placeholder -->
         <div class="card">
             <div class="card-header">
-                <span class="card-title">Calorie Trend</span>
+                <span class="card-title">Daily Goal Status</span>
             </div>
-            <div class="graph-placeholder">Graph coming soon</div>
+            <div class="goal-checklist">
+                <div class="goal-check-item">
+                    <span>Calories</span>
+                    <span class="badge {% if calorie_goal and total_calories >= calorie_goal %}badge-green{% else %}badge-amber{% endif %}">
+                        {% if calorie_goal %}{{ calorie_goal - total_calories if calorie_goal > total_calories else 0 }} left{% else %}Set a goal{% endif %}
+                    </span>
+                </div>
+                <div class="goal-check-item">
+                    <span>Protein</span>
+                    <span class="badge {% if protein_goal and total_protein >= protein_goal %}badge-green{% else %}badge-amber{% endif %}">
+                        {% if protein_goal %}{{ protein_goal - total_protein if protein_goal > total_protein else 0 }}g left{% else %}Set a goal{% endif %}
+                    </span>
+                </div>
+                <div class="goal-check-item">
+                    <span>Carbs</span>
+                    <span class="badge {% if carb_goal and total_carbs >= carb_goal %}badge-green{% else %}badge-amber{% endif %}">
+                        {% if carb_goal %}{{ carb_goal - total_carbs if carb_goal > total_carbs else 0 }}g left{% else %}Set a goal{% endif %}
+                    </span>
+                </div>
+                <div class="goal-check-item">
+                    <span>Fat</span>
+                    <span class="badge {% if fat_goal and total_fat >= fat_goal %}badge-green{% else %}badge-amber{% endif %}">
+                        {% if fat_goal %}{{ fat_goal - total_fat if fat_goal > total_fat else 0 }}g left{% else %}Set a goal{% endif %}
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 
