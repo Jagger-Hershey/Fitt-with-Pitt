@@ -1,6 +1,7 @@
 # Fitt-with-Pitt
 ## Health and Fitness Tracking Application
 ![Logo](./static/images/logo.png)
+<br>
 CS1530 Software Engineering - Group 8 Fitness & Wellness
 
 ## Highlights
