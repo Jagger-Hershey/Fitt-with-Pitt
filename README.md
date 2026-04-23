@@ -1,37 +1,57 @@
 # Fitt-with-Pitt
-CS1530 Group 8 Health and Fitness Project
+## Health and Fitness Tracking Application
+![Logo](./static/images/logo.png)
+<br>
+CS1530 Software Engineering - Group 8 Fitness & Wellness
 
-## Testing
+## Highlights
 
-The project now includes a pytest-based behavioral test suite in `tests/`.
+- Exercise, nutrition, and body weight tracking
+- Goal setting and tracking
+- Data visualization of your progress
+- Secure user data
 
-### What the suite covers
+## Overview
 
-- authentication and access control
-- user registration and login behavior
-- nutrition logging and daily summary calculations
-- workout logging and weekly progress behavior
-- goals page updates for nutrition, activity, and weight goals
-- dashboard integration so saved goals show up in tracking visuals
-- authorization checks for deleting another user's data
+This is the project repository for the Spring 2026 CS1530 Software Engineering Group 8 final project. Our software follows a fitness and wellness topic, building a tracking application to support users' health and fitness goals. Users can track exercise progress, weight loss/gain, and nutritional goals such as desired protein intake. All of this is supported with data visualization to help show your progress and keep you motivated on your journey.
 
-### Run the suite
+### Software Specifications
 
-1. Install dependencies from `requirements.txt`
-2. Run `pytest`
+The tech stack used includes:
 
-### Testing approach
+**Front End:**
+- Vanilla CSS/HTML
+- JavaScript for visualization graphs via Chart.js
 
-The current suite is behavior-first. It focuses on the routes and user-visible flows that matter most:
+**Back End:**
+- Flask framework (Python)
 
-- route protection for logged-out users
-- form submissions that create or update tracked data
-- persistence of saved goals
-- cross-page integration between goals, logging pages, and the dashboard
+**Database:**
+- SQLite
 
-As the project grows, the next useful additions would be:
+### Authors
 
-- edge-case validation tests for invalid form inputs
-- more authorization tests for activity and weight data
-- visual regression or browser-based smoke tests for key pages
-- unit tests for helper functions if the route logic is split into services
+Project Created By:
+- Jagger Hershey
+- Wyatt McMullen
+- Mason Zhang
+- Ismail Miloua
+- Nate Ippolito
+
+### Self-Hosting
+
+1. Clone or fork this repository
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Create a `.env` file in the project root with the following:
+   ```
+   SECRET_KEY=your-generated-key
+   MAIL_API_KEY=mailboxlayer-api-key
+   MAIL_AUTH_KEY=brevo-api-key
+   ```
+4. Run the application:
+   ```bash
+   flask --app app --debug run
+   ```
